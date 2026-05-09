@@ -1,0 +1,6 @@
+Debug/
+Error_Snapshots/
+__pycache__/
+.idea/
+.venv/
+.pytest_cache
