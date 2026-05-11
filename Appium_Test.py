@@ -5,6 +5,7 @@ from appium.webdriver.extensions.android.nativekey import AndroidKey
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 import time
+import os
 
 options = UiAutomator2Options()
 
@@ -15,6 +16,15 @@ options.automation_name = "UiAutomator2"
 # APK path INSIDE container
 #options.app = "/root/tmp/bitbar-sample-app.apk"
 options.app = "/home/androidusr/bitbar-sample-app.apk"
+
+run_type = "manual"
+
+if "var/lib/jenkins/workspace" in os.getcwd():
+    print("We are running script from Jenkins server - path needs to be changed")
+    run_type = "jenkins"
+    print("Path for results file has been set, type set to jenkins")
+else:
+    print("We are running script from development VM")
 
 driver = webdriver.Remote(
     #To run from Windows (host)
