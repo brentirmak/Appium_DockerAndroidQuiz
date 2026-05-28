@@ -18,7 +18,6 @@ try:
     options.automation_name = "UiAutomator2"
 
     # APK path INSIDE container
-    #options.app = "/root/tmp/bitbar-sample-app.apk"
     options.app = "/home/androidusr/bitbar-sample-app.apk"
 
     run_type = "manual"
