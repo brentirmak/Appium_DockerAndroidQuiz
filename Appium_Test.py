@@ -8,6 +8,7 @@ import Appium_Test_WriteResult
 import time
 import os
 import sys
+from dotenv import load_dotenv
 
 try:
     options = UiAutomator2Options()
@@ -21,6 +22,12 @@ try:
     options.app = "/home/androidusr/bitbar-sample-app.apk"
 
     run_type = "manual"
+
+    # 1. Load the environment variables from the .env file
+    load_dotenv()
+
+    # 2. Retrieve the secrets using os.getenv()
+    webdriver_remote_url = os.getenv("WEBDRIVER_REMOTE_URL")
 
     if "var/lib/jenkins/workspace" in os.getcwd():
         print("We are running script from Jenkins server - path needs to be changed")
@@ -42,7 +49,7 @@ try:
             #To run from Windows (host)
             #command_executor="http://localhost:4723",
             #To run from VM inside of Windows (host)
-            command_executor="http://192.168.150.1:4723",
+            command_executor=webdriver_remote_url,
             options=options
         )
 

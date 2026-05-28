@@ -7,6 +7,15 @@ import time
 import pytz
 from datetime import datetime, timedelta
 from pytz import timezone
+from dotenv import load_dotenv
+
+# 1. Load the environment variables from the .env file
+load_dotenv()
+
+# 2. Retrieve the secrets using os.getenv()
+mysql_url = os.getenv("MYSQL_URL")
+mysql_username = os.getenv("MYSQL_USERNAME")
+mysql_password = os.getenv("MYSQL_PASSWORD")
 
 # File to store overall Appium Test information locally - also used for DB storing purposes
 if "var/lib/jenkins/workspace" in os.getcwd():
@@ -24,9 +33,9 @@ print("Connecting to Credence ...")
 
 try:
     config = {
-        'user': 'selenium',
-        'password': 'Selenium#123#',
-        'host': '192.168.239.1',
+        'user': mysql_username,
+        'password': mysql_password,
+        'host': mysql_url,
         'database': 'appium',
     }
     cnx = mysql.connector.connect(**config)
@@ -36,9 +45,9 @@ except Exception as f:
     time.sleep(10)
 
     config = {
-        'user': 'selenium',
-        'password': 'Selenium#123#',
-        'host': '192.168.239.1',
+        'user': mysql_username,
+        'password': mysql_password,
+        'host': mysql_url,
         'database': 'appium',
     }
     cnx = mysql.connector.connect(**config)
