@@ -1,4 +1,11 @@
-<b>Background</b>
+<b>Background</b><br>
+
+1) Mobile App running on Docker Desktop (Windows) https://hub.docker.com/r/budtmo/docker-android<br>
+2) After each run, results are stored in a MySQL database.<br>
+3) PyCharm Dev Environment is on Ubuntu 26.04 - Jenkins(1)<br>
+4) Jenkins Instance is running on Ubuntu 26.04 - Jenkins(1)<br>
+5) Credentials are hidden via secret text in Jenkins; locally they are hidden via .env<br>
+
 This repo is for an Appium script that run against a configuration on Docker Desktop (budtmo/docker-android:emulator_13.0)<br>
 
 The commonly used ports for budtmo/docker-android are: <br>
@@ -7,7 +14,7 @@ The commonly used ports for budtmo/docker-android are: <br>
 5555 — ADB (Android Debug Bridge) connection port<br> 
 4723 — Appium server (only needed if you're using Appium for test automation<br> 
 
-<b>*** STEPS TO SETUP ENVIRONMENT ***</b> 
+<b>*** STEPS TO SETUP ENVIRONMENT ***</b> <br>
 1) Go to folder C:\DockerProjects> <br>
 NOTE: Use the budtmo/docker-android image. It contains the Android OS, an Emulator, and Appium all pre-configured in one container.<br> 
 
