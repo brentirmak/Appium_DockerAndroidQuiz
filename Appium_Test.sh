@@ -13,7 +13,8 @@ echo "Script lives in: $SCRIPT_DIR"
 echo "Called from: $CALLED_FROM"
 
 echo "Running the Appium_Test script"
-python3 Appium_Test.py
+#python3 Appium_Test.py
+pytest
 echo "Storing the results for the Appium_Test script run"
 python3 Appium_Test_StoreDB.py
 echo "Results have been stored - will remove txt results file"
