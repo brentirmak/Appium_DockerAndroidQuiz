@@ -113,7 +113,7 @@ except Exception as err:
     driver.quit()
 
     try:
-        sys.exit()
+        sys.exit(1)
     except SystemExit:
         print("SystemExit Exception terminated the program!")
         quit()
