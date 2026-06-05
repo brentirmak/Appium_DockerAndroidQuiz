@@ -4,7 +4,7 @@ import time
 import os
 import sys
 import pytest
-import Appium_Test_WriteResult
+import Appium_DockerAndroidQuiz_WriteResult
 from appium.webdriver.common.appiumby import AppiumBy
 from appium.webdriver.extensions.android.nativekey import AndroidKey
 
