@@ -16,6 +16,6 @@ echo "Running the Appium_DockerAndroidQuiz script"
 #python3 Appium_Test.py
 pytest
 echo "Storing the results for the Appium_Test script run"
-python3 Appium_Test_StoreDB.py
+python3 Appium_DockerAndroidQuiz_StoreDB.py
 echo "Results have been stored - will remove txt results file"
 rm Appium_DockerAndroidQuiz.txt
