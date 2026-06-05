@@ -20,12 +20,12 @@ mysql_password = os.getenv("MYSQL_PASSWORD")
 # File to store overall Appium Test information locally - also used for DB storing purposes
 if "var/lib/jenkins/workspace" in os.getcwd():
     print("We are running script from Jenkins server - path needs to be changed")
-    results_log = os.getcwd() + '/Appium_Test.txt'
+    results_log = os.getcwd() + '/Appium_DockerAndroidQuiz.txt'
     print("Results Log Path (per script): ", results_log)
     print("Path for results file has been set")
 else:
     print("We are running script from development VM")
-    results_log = '/home/brent-ubuntu-26-04/SeleniumProjects/Appium_Test/Appium_Test.txt'
+    results_log = '/home/brent-ubuntu-26-04/AppiumProjects/Appium_DockerAndroidQuiz/Appium_DockerAndroidQuiz.txt'
     print("Results Log Path (per script): ", results_log)
     print("Path for results file has been set")
 
@@ -77,7 +77,7 @@ for line in lines:
 print("Inserting results into database ...")
 
 cursor.execute(
-    """INSERT INTO appium_test(RunTimeStamp, RunType, AnswerQuestion)
+    """INSERT INTO appium_docker_android_quiz(RunTimeStamp, RunType, AnswerQuestion)
                   values (%s, %s, %s)""",
     (current_timestamp, run_type, Answer_Question_trx_time))
 

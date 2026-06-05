@@ -16,8 +16,8 @@ class TestAnswerQuestion:
         # Detect run type
         run_type = "jenkins" if "var/lib/jenkins/workspace" in os.getcwd() else "manual"
         results_log_path = (
-            os.getcwd() + '/Appium_Test.txt' if run_type == "jenkins"
-            else '/home/brent-ubuntu-26-04/SeleniumProjects/Appium_Test/Appium_Test.txt'
+            os.getcwd() + '/Appium_DockerAndroidQuiz.txt' if run_type == "jenkins"
+            else '/home/brent-ubuntu-26-04/AppiumProjects/Appium_DockerAndroidQuiz/Appium_DockerAndroidQuiz.txt'
         )
 
         time.sleep(5)
