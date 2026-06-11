@@ -9,13 +9,20 @@ SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 # Get directory where script was called FROM
 CALLED_FROM=$(pwd)
 
+PYTEST_EXIT_CODE=$?
+
 echo "Script lives in: $SCRIPT_DIR"
 echo "Called from: $CALLED_FROM"
 
 echo "Running the Appium_DockerAndroidQuiz script"
 #python3 Appium_Test.py
-pytest -s
+pytest -s -v
 echo "Storing the results for the Appium_Test script run"
 python3 Appium_DockerAndroidQuiz_StoreDB.py
 echo "Results have been stored - will remove txt results file"
 rm Appium_DockerAndroidQuiz.txt
+
+if [ $PYTEST_EXIT_CODE -ne 0 ]; then
+    echo "Tests failed"
+    exit 1
+fi
