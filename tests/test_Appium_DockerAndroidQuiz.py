@@ -50,6 +50,6 @@ class TestAnswerQuestion:
         duration = time.time() - start
 
         with open(results_log_path, 'w') as results_log:
-            Appium_Test_WriteResult.init(results_log, "Answer_Question", "Pass", str(duration), run_type)
+            Appium_DockerAndroidQuiz_WriteResult.init(results_log, "Answer_Question", "Pass", str(duration), run_type)
 
         assert correct_answer, "Never found the correct answer"
