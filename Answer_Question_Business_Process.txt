@@ -1,0 +1,10 @@
+*** Start Test Answer Question ***
+
+1) Pick a random answer (radio button)
+2) Enter name into the text field
+3) Hit Enter on the onscreen keyboard
+4) Click on the Answer button
+5a) If "Wrong Answer" is displayed, click on the back button to re-do first 4 steps above
+5b) If "Correct Answer" is displayed, test will end
+
+*** End Test Answer Question ***
