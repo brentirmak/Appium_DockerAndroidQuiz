@@ -29,7 +29,7 @@ else:
     print("Results Log Path (per script): ", results_log)
     print("Path for results file has been set")
 
-print("Connecting to Credence ...")
+print("Connecting to MySQL...")
 
 try:
     config = {

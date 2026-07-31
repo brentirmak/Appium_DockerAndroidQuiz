@@ -27,28 +27,39 @@ class QuizPage(BasePage):
         )
 
     def select_radio(self, index: int):
+        print("Will tap radio button")
         self.tap(self.radio_locator(index))
+        print("Tapped radio button")
 
     def enter_name(self, name: str):
+        print("Will enter name")
         self.type_text(self.NAME_FIELD, name)
+        print("Entered name. Will now hit <Enter>")
         self.driver.press_keycode(AndroidKey.ENTER)
+        print("<Enter> key was pressed")
 
     def submit(self):
+        print("Will click on the Submit button")
         self.tap(self.SUBMIT_BUTTON)
+        print("Submit button was pressed")
 
     def get_result_text(self) -> str:
+        print("Will get result text")
         return self.get_text(self.RESULT_TEXT)
 
     def is_correct(self) -> bool:
+        print("Checking for the correct answer")
         return self.get_result_text() == self.CORRECT_RESULT_TEXT
 
     def go_back_to_question(self):
+        print("Will go back to the previous question")
         self.driver.back()
 
     def answer_with_random_choice(self, name: str = "Brent") -> bool:
         """One full attempt: pick a random radio, enter name, submit, check result."""
         import random
         random_index = random.randint(0, 2)
+        print("Will pick a random answer")
         self.select_radio(random_index)
         self.enter_name(name)
         self.submit()

@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 def driver():
     load_dotenv()
     webdriver_remote_url = os.getenv("WEBDRIVER_REMOTE_URL")
-    print("Current directory:", os.getcwd())
+    print("\nCurrent directory:", os.getcwd())
     print("WEBDRIVER_REMOTE_URL =", os.getenv("WEBDRIVER_REMOTE_URL"))
     
     options = UiAutomator2Options()

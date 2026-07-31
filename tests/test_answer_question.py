@@ -21,9 +21,11 @@ class TestAnswerQuestion:
         while not correct_answer:
             correct_answer = quiz_page.answer_with_random_choice("Brent")
             if not correct_answer:
+                print("Correct answer NOT found! Trying again...")
                 quiz_page.go_back_to_question()
                 quiz_page.wait_for_question_loaded()
 
+        print("Correct answer found!")
         duration = time.time() - start
         with open(results_log_path, "w") as results_log:
             Appium_DockerAndroidQuiz_WriteResult.init(
