@@ -15,7 +15,16 @@ def driver():
     options.platform_name = "Android"
     options.device_name = "Android Emulator"
     options.automation_name = "UiAutomator2"
-    options.app = "/home/androidusr/bitbar-sample-app.apk"
+    #options.app = "/home/androidusr/bitbar-sample-app.apk"
+
+    apk_path = os.getenv(
+        "APK_PATH",
+        "/home/androidusr/bitbar-sample-app.apk"
+    )
+
+    print("APK_PATH =", apk_path)
+
+    options.app = apk_path
 
     drv = webdriver.Remote(
         command_executor=webdriver_remote_url,
