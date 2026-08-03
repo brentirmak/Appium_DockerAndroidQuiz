@@ -1,4 +1,3 @@
-```python
 import os
 
 import pytest
@@ -55,5 +54,3 @@ def driver():
         drv.quit()
     except Exception:
         pass
-```
-s
