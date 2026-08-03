@@ -1,88 +1,254 @@
 import os
+import time
+from datetime import datetime
 
 import mysql.connector
-from mysql.connector.constants import ClientFlag
-import time
-
 import pytz
-from datetime import datetime, timedelta
-from pytz import timezone
 from dotenv import load_dotenv
 
-# 1. Load the environment variables from the .env file
+
+# ============================================================
+# Load environment variables
+# ============================================================
+
 load_dotenv()
 
-# 2. Retrieve the secrets using os.getenv()
-mysql_url = os.getenv("MYSQL_URL")
+
+# ============================================================
+# MySQL configuration
+#
+# These values come from Jenkins environment variables:
+#
+# MYSQL_HOST=10.0.0.164
+# MYSQL_PORT=3306
+# MYSQL_USERNAME=your_username
+# MYSQL_PASSWORD=your_password
+# ============================================================
+
+mysql_host = os.getenv("MYSQL_HOST", "10.0.0.164")
+mysql_port = int(os.getenv("MYSQL_PORT", "3306"))
 mysql_username = os.getenv("MYSQL_USERNAME")
 mysql_password = os.getenv("MYSQL_PASSWORD")
+mysql_database = os.getenv("MYSQL_DATABASE", "appium")
 
-# File to store overall Appium Test information locally - also used for DB storing purposes
+
+# ============================================================
+# Results log path
+# ============================================================
+
 if "var/lib/jenkins/workspace" in os.getcwd():
-    print("We are running script from Jenkins server - path needs to be changed")
-    results_log = os.getcwd() + '/Appium_DockerAndroidQuiz.txt'
-    print("Results Log Path (per script): ", results_log)
+
+    print("We are running script from Jenkins server")
+    results_log = os.path.join(
+        os.getcwd(),
+        "Appium_DockerAndroidQuiz.txt"
+    )
+
+    print("Results Log Path (per script):", results_log)
     print("Path for results file has been set")
+
 else:
+
     print("We are running script from development VM")
-    results_log = '/home/brent-ubuntu-26-04/AppiumProjects/Appium_DockerAndroidQuiz/Appium_DockerAndroidQuiz.txt'
-    print("Results Log Path (per script): ", results_log)
+
+    results_log = (
+        "/home/brent-ubuntu-26-04/"
+        "AppiumProjects/Appium_DockerAndroidQuiz/"
+        "Appium_DockerAndroidQuiz.txt"
+    )
+
+    print("Results Log Path (per script):", results_log)
     print("Path for results file has been set")
+
+
+# ============================================================
+# Verify MySQL configuration
+# ============================================================
+
+print("==========================================")
+print("MySQL Configuration")
+print("==========================================")
+print("MYSQL_HOST =", mysql_host)
+print("MYSQL_PORT =", mysql_port)
+print("MYSQL_USERNAME =", mysql_username)
+print("MYSQL_DATABASE =", mysql_database)
+print("==========================================")
+
+
+# ============================================================
+# Validate required credentials
+# ============================================================
+
+if not mysql_username:
+    raise RuntimeError(
+        "MYSQL_USERNAME environment variable is not set."
+    )
+
+if not mysql_password:
+    raise RuntimeError(
+        "MYSQL_PASSWORD environment variable is not set."
+    )
+
+
+# ============================================================
+# Connect to MySQL
+# ============================================================
 
 print("Connecting to MySQL...")
 
+config = {
+    "user": mysql_username,
+    "password": mysql_password,
+    "host": mysql_host,
+    "port": mysql_port,
+    "database": mysql_database,
+}
+
+
 try:
-    config = {
-        'user': mysql_username,
-        'password': mysql_password,
-        'host': mysql_url,
-        'database': 'appium',
-    }
+
     cnx = mysql.connector.connect(**config)
-except Exception as f:
-    print(f)
-    print("Was not ale to connect to MYSQL - will sleep and try again")
+
+    print(
+        f"MySQL connection established to "
+        f"{mysql_host}:{mysql_port}"
+    )
+
+except Exception as first_error:
+
+    print("==========================================")
+    print("MySQL connection failed")
+    print("==========================================")
+    print(first_error)
+    print("Will sleep for 10 seconds and retry...")
+    print("==========================================")
+
     time.sleep(10)
 
-    config = {
-        'user': mysql_username,
-        'password': mysql_password,
-        'host': mysql_url,
-        'database': 'appium',
-    }
-    cnx = mysql.connector.connect(**config)
+    try:
+
+        cnx = mysql.connector.connect(**config)
+
+        print(
+            f"MySQL connection established after retry "
+            f"to {mysql_host}:{mysql_port}"
+        )
+
+    except Exception as second_error:
+
+        print("==========================================")
+        print("MySQL connection failed after retry")
+        print("==========================================")
+        print(second_error)
+        print("==========================================")
+
+        raise
+
+
+# ============================================================
+# Create cursor
+# ============================================================
 
 cursor = cnx.cursor()
 
-current_timestamp = datetime.now(pytz.timezone('America/Los_Angeles'))
 
-# 2024-06-10 13:21:28.767966-07:00
-print("Current time: ", current_timestamp)
+# ============================================================
+# Current timestamp
+# ============================================================
+
+current_timestamp = datetime.now(
+    pytz.timezone("America/Los_Angeles")
+)
+
+print("Current time:", current_timestamp)
 print("")
+
+
+# ============================================================
+# Open Appium results file
+# ============================================================
 
 print("Opening file to post to Credence ...")
 
-text_file = open(results_log, "r")
-lines = text_file.readlines()
+if not os.path.isfile(results_log):
 
-Answer_Question_trx_time = 'NULL'
+    print("ERROR: Results file does not exist:")
+    print(results_log)
+
+    cursor.close()
+    cnx.close()
+
+    raise FileNotFoundError(results_log)
+
+
+with open(results_log, "r") as text_file:
+
+    lines = text_file.readlines()
+
+
+# ============================================================
+# Parse transaction results
+# ============================================================
+
+Answer_Question_trx_time = "NULL"
+Answer_Question_trx_status = "NULL"
+run_type = "UNKNOWN"
+
 
 for line in lines:
-    trx_name, trx_status, trx_duration, run_type = line.split(",")
 
-    if trx_name == 'Answer_Question':
+    line = line.strip()
+
+    if not line:
+        continue
+
+    parts = line.split(",")
+
+    if len(parts) != 4:
+        print("Skipping malformed results line:")
+        print(line)
+        continue
+
+    trx_name, trx_status, trx_duration, current_run_type = parts
+
+    run_type = current_run_type
+
+    if trx_name == "Answer_Question":
+
         Answer_Question_trx_time = trx_duration[:5]
         Answer_Question_trx_status = trx_status
+
+
+# ============================================================
+# Insert results into MySQL
+# ============================================================
 
 print("Inserting results into database ...")
 
 cursor.execute(
-    """INSERT INTO appium_docker_android_quiz(RunTimeStamp, RunType, AnswerQuestion)
-                  values (%s, %s, %s)""",
-    (current_timestamp, run_type, Answer_Question_trx_time))
+    """
+    INSERT INTO appium_docker_android_quiz
+        (RunTimeStamp, RunType, AnswerQuestion)
+    VALUES
+        (%s, %s, %s)
+    """,
+    (
+        current_timestamp,
+        run_type,
+        Answer_Question_trx_time,
+    ),
+)
 
 cnx.commit()
-cursor.close()
 
+print("Results successfully inserted into MySQL.")
+
+
+# ============================================================
+# Close database connection
+# ============================================================
+
+cursor.close()
 cnx.close()
-text_file.close()
+
+print("MySQL connection closed.")
