@@ -3,3 +3,4 @@ selenium==4.15.0
 pytest-html==4.1
 python-dotenv
 mysql-connector-python
+pytz
