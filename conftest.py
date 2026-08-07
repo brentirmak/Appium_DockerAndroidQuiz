@@ -15,33 +15,16 @@ def driver():
     load_dotenv()
 
     # ============================================================
-    # Determine Appium server
+    # Determine Appium server (Docker Appium)
     # ============================================================
-    #
-    # Jenkins:
-    #   WEBDRIVER_REMOTE_URL is supplied by Jenkins.
-    #
-    # Local:
-    #   Falls back to localhost.
-    #
     webdriver_remote_url = os.getenv(
         "WEBDRIVER_REMOTE_URL",
-        "http://127.0.0.1:4723"
+        "http://127.0.0.1:4725"   # Docker Appium runs on its own port
     )
 
     # ============================================================
-    # Determine APK path
+    # Determine APK path (inside Docker container)
     # ============================================================
-    #
-    # Jenkins:
-    #   Jenkins exports:
-    #
-    #   APK_PATH=/home/androidusr/bitbar-sample-app.apk
-    #
-    # Local:
-    #   Falls back to the same path, which works with the
-    #   locally running Docker/Appium environment.
-    #
     apk_path = os.getenv(
         "APK_PATH",
         "/home/androidusr/bitbar-sample-app.apk"
@@ -50,9 +33,8 @@ def driver():
     # ============================================================
     # Display configuration
     # ============================================================
-
     print("\n==========================================")
-    print("Appium Driver Configuration")
+    print("Docker Appium Driver Configuration")
     print("==========================================")
     print("Current directory:", os.getcwd())
     print("WEBDRIVER_REMOTE_URL =", webdriver_remote_url)
@@ -60,25 +42,25 @@ def driver():
     print("==========================================")
 
     # ============================================================
-    # Configure Android
+    # Configure Android (Docker Emulator)
     # ============================================================
-
     options = UiAutomator2Options()
 
     options.platform_name = "Android"
-    options.device_name = "Android Emulator"
     options.automation_name = "UiAutomator2"
 
-    # APK path is interpreted by the Appium server.
-    #
-    # Appium is running inside Docker, therefore this path
-    # must exist INSIDE the Docker container.
+    # Docker emulator UDID (never Windows)
+    options.set_capability("appium:udid", "emulator-5556")
+
+    # Clear device name to avoid Windows confusion
+    options.set_capability("appium:deviceName", "Docker-Android")
+
+    # APK path must exist inside Docker container
     options.app = apk_path
 
     # ============================================================
     # Create Appium session
     # ============================================================
-
     drv = webdriver.Remote(
         command_executor=webdriver_remote_url,
         options=options
@@ -87,13 +69,11 @@ def driver():
     # ============================================================
     # Return driver to pytest
     # ============================================================
-
     yield drv
 
     # ============================================================
     # Cleanup
     # ============================================================
-
     try:
         drv.quit()
     except Exception:
