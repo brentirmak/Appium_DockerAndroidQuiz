@@ -39,14 +39,19 @@ def driver():
     options = UiAutomator2Options()
     options.platform_name = "Android"
     options.automation_name = "UiAutomator2"
-    # Docker emulator UDID (never Windows) — set via DEVICE_UDID env var
-    # by the Jenkins pipeline (host:port for a remote adb-connected
-    # device), falling back to the current known-good value for
-    # manual/local runs.
-    options.set_capability(
-        "appium:udid",
-        os.getenv("DEVICE_UDID", "192.168.150.1:5560")
-    )
+
+    if os.getenv("JENKINS_URL") or os.getenv("BUILD_NUMBER"):
+        # Running under Jenkins - your pipeline already sets DEVICE_UDID,
+        # so reaching here means something upstream changed; keep old default as a safety net
+        print("We are running on Jenkins - setting device_udid accordingly")
+        device_udid = "192.168.150.1:5560"
+    else:
+        # Manual/local run - the container's internal Appium sees the emulator by its own serial
+        print("We are performing a manual run - setting device_udid accordingly")
+        device_udid = "emulator-5554"
+
+    options.set_capability("appium:udid", device_udid)
+
     # Clear device name to avoid Windows confusion
     options.set_capability("appium:deviceName", "Docker-Android")
     # APK path must exist inside Docker container
