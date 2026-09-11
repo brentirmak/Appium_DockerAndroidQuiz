@@ -44,7 +44,8 @@ def driver():
         # Running under Jenkins - your pipeline already sets DEVICE_UDID,
         # so reaching here means something upstream changed; keep old default as a safety net
         print("We are running on Jenkins - setting device_udid accordingly")
-        device_udid = "192.168.150.1:5560"
+        #device_udid = "192.168.150.1:5560"
+        device_udid = "192.168.150.1:5555"
     else:
         # Manual/local run - the container's internal Appium sees the emulator by its own serial
         print("We are performing a manual run - setting device_udid accordingly")
