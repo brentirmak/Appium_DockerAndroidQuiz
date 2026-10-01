@@ -43,9 +43,15 @@ class QuizPage(BasePage):
         self.tap(self.SUBMIT_BUTTON)
         print("Submit button was pressed")
 
-    def get_result_text(self) -> str:
-        print("Will get result text")
-        return self.get_text(self.RESULT_TEXT)
+    def get_result_text(self, timeout=10):
+        element = WebDriverWait(
+            self.driver,
+            timeout
+        ).until(
+            EC.visibility_of_element_located(self.RESULT_TEXT)
+        )
+
+        return element.text
 
     def is_correct(self) -> bool:
         print("Checking for the correct answer")
@@ -54,6 +60,7 @@ class QuizPage(BasePage):
     def go_back_to_question(self):
         print("Will go back to the previous question")
         self.driver.back()
+        self.wait_for_question_loaded()
 
     def answer_with_random_choice(self, name: str = "Brent") -> bool:
         """One full attempt: pick a random radio, enter name, submit, check result."""
